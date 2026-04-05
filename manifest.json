@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Calcite",
+  "version": "0.1",
+  "icons": {
+    "16": "assets/icon16.png",
+    "32": "assets/icon32.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "32": "assets/icon32.png"
+    }
+  },
+  "permissions": ["storage"],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["https://geometrydash.com/*"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://geometrydash.com/game/index.html"],
+      "js": ["bridge.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["https://geometrydash.com/game/index.html"],
+      "js": ["index.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    }
+  ]
+}

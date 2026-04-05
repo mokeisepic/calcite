@@ -1,0 +1,39 @@
+const api = typeof browser !== "undefined" ? browser : chrome;
+
+window.addEventListener("message", async (e) => {
+  if (e.source != window) return;
+
+  if (e.data.type == "SAVE_MOD") {
+    const mods = (await api.storage.local.get("mods")).mods || {};
+    mods[e.data.mod.id] = e.data.mod;
+    await api.storage.local.set({ mods });
+    window.postMessage({ type: "SAVE_MOD_SUCCESS", id: e.data.mod.id }, "*");
+    return;
+  }
+
+  if (e.data.type == "FETCH_MODS") {
+    const data = await api.storage.local.get("mods");
+    window.postMessage({
+      type: "RECEIVE_MODS",
+      mods: Object.values(data.mods || {}),
+    }, "*");
+    return;
+  }
+
+  if (e.data.type == "REMOVE_MOD") {
+    const mods = (await api.storage.local.get("mods")).mods || {};
+    delete mods[e.data.id];
+    await api.storage.local.set({ mods });
+    window.postMessage({ type: "REMOVE_MOD_SUCCESS", id: e.data.id }, "*");
+    return;
+  }
+
+  if (e.data.type == "GET_ASSET") {
+    const url = api.runtime.getURL(e.data.path);
+    window.postMessage({
+      type: "RECEIVE_ASSET",
+      path: e.data.path,
+      url: url,
+    }, "*");
+  }
+});

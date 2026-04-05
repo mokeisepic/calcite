@@ -1,0 +1,78 @@
+import * as Phaser from "phaser";
+import { injectMenuButton } from "./menuButton";
+
+import { initMenu } from "./menu";
+import { loadMods } from "./mods";
+
+const executeHook = () => {
+  console.log("Calcite Hook Loaded!");
+
+  let _phaser: typeof Phaser | undefined = undefined;
+
+  Object.defineProperty(window, "Phaser", {
+    get: function () {
+      return _phaser;
+    },
+    set: function (value) {
+      _phaser = value;
+      console.log("Phaser loaded! Injecting Phaser.Game hook...");
+
+      const OriginalGame = _phaser?.Game;
+      (_phaser!.Game as any) = function (config: Phaser.Types.Core.GameConfig) {
+        const instance = new OriginalGame!(config);
+        window.gdGame = instance;
+
+        // Scene Hook
+        if (config.scene != null) {
+          const scenes = Array.isArray(config.scene)
+            ? config.scene
+            : [config.scene];
+
+          for (const scene of scenes) {
+            const target = (typeof scene === "function")
+              ? scene.prototype
+              : scene;
+            if (!target) continue;
+
+            // IDK this was the most consistant method i could find, hooking .create woudln't give me access to the `this` object fsr.
+            Object.defineProperty(target, "sys", {
+              get: function () {
+                if (!this._hooked) {
+                  this._hooked = true;
+                  if (this._sys.settings.key == "GameScene") {
+                    window.gdScene = this;
+
+                    const checkReady = () => {
+                      if (this._sys && this._sys.events) {
+                        this._sys.events.once("start", () => {
+                          console.log("Geometry Dash Loaded!");
+                          injectMenuButton();
+                          loadMods();
+                        });
+                        return;
+                      }
+                      requestAnimationFrame(checkReady);
+                    };
+
+                    checkReady();
+                  }
+                }
+                return this._sys;
+              },
+              set: function (value) {
+                this._sys = value;
+              },
+              configurable: true,
+            });
+          }
+        }
+
+        return instance;
+      };
+    },
+    configurable: true,
+  });
+};
+
+executeHook();
+initMenu();
