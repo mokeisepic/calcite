@@ -1,5 +1,6 @@
 {
   "name": "calcite",
+  "license": "LGPL-3.0-only",
   "module": "index.ts",
   "type": "module",
   "private": true,
