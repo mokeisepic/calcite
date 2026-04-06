@@ -5,6 +5,7 @@ export interface ModData {
   code: string;
   name: string;
   needsRefresh: boolean;
+  enabled: boolean;
 }
 
 const parseHeaderFields = (code: string): Record<string, string> => {
@@ -32,6 +33,7 @@ export const parseMod = (fileName: string, code: string): ModData => {
     code,
     name: fields.name || "Untitled Mod",
     needsRefresh: fields.needsRefresh === "true",
+    enabled: true,
   };
 };
 
@@ -74,6 +76,32 @@ export const removeMod = (mod: ModData): Promise<void> => {
   });
 };
 
+export const enableMod = (mod: ModData): Promise<void> => {
+  return new Promise((resolve) => {
+    const handler = (e: MessageEvent) => {
+      if (e.data.type === "ENABLE_MOD_SUCCESS" && mod.id === e.data.id) {
+        window.removeEventListener("message", handler);
+        resolve();
+      }
+    };
+    window.addEventListener("message", handler);
+    window.postMessage({ type: "ENABLE_MOD", id: mod.id }, "*");
+  });
+};
+
+export const disableMod = (mod: ModData): Promise<void> => {
+  return new Promise((resolve) => {
+    const handler = (e: MessageEvent) => {
+      if (e.data.type === "DISABLE_MOD_SUCCESS" && mod.id === e.data.id) {
+        window.removeEventListener("message", handler);
+        resolve();
+      }
+    };
+    window.addEventListener("message", handler);
+    window.postMessage({ type: "DISABLE_MOD", id: mod.id }, "*");
+  });
+};
+
 let gdLoaded = false;
 export const hasLoaded = () => {
   gdLoaded = true;
@@ -99,6 +127,6 @@ export const executeMod = (mod: ModData) => {
 export const loadMods = async () => {
   const mods = await getMods();
   for (const mod of mods) {
-    executeMod(mod);
+    if (mod.enabled) executeMod(mod);
   }
 };

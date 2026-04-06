@@ -32,12 +32,17 @@
     }
   }
 
-  & ul {
-    margin-left: 1rem;
-  }
+  & fieldset {
+    border: none;
 
-  & li {
-    position: relative;
+    & div {
+      position: relative;
+
+      & label {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
   }
 
   & button {
@@ -46,6 +51,7 @@
     width: 2rem;
     cursor: pointer;
     position: absolute;
+    top: 0;
     right: 0;
   }
 }

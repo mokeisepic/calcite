@@ -28,6 +28,22 @@ window.addEventListener("message", async (e) => {
     return;
   }
 
+  if (e.data.type == "ENABLE_MOD") {
+    const mods = (await api.storage.local.get("mods")).mods || {};
+    mods[e.data.id].enabled = true;
+    await api.storage.local.set({ mods });
+    window.postMessage({ type: "ENABLE_MOD_SUCCESS", id: e.data.id }, "*");
+    return;
+  }
+
+  if (e.data.type == "DISABLE_MOD") {
+    const mods = (await api.storage.local.get("mods")).mods || {};
+    mods[e.data.id].enabled = false;
+    await api.storage.local.set({ mods });
+    window.postMessage({ type: "DISABLE_MOD_SUCCESS", id: e.data.id }, "*");
+    return;
+  }
+
   if (e.data.type == "GET_ASSET") {
     const url = api.runtime.getURL(e.data.path);
     window.postMessage({

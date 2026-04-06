@@ -2,6 +2,8 @@ import { render } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import styles from "./menu.css" with { type: "text" };
 import {
+  disableMod,
+  enableMod,
   executeMod,
   getMods,
   type ModData,
@@ -72,6 +74,21 @@ const Menu = () => {
     setNeedRefresh(true);
   };
 
+  const handleToggleMod = async (mod: ModData) => {
+    if (mod.enabled) {
+      await disableMod(mod);
+      setNeedRefresh(true);
+    } else {
+      await enableMod(mod);
+      if (mod.needsRefresh) setNeedRefresh(true);
+      else executeMod(mod);
+    }
+
+    setMods((prevMods) =>
+      prevMods.map((m) => m.id === mod.id ? { ...m, enabled: !m.enabled } : m)
+    );
+  };
+
   const handleClose = () => {
     if (needRefresh) window.location.reload();
     dialogRef.current?.close();
@@ -87,16 +104,23 @@ const Menu = () => {
       </header>
       <input type="file" accept=".js" onChange={handleUpload} />
       {mods.length > 0 && (
-        <ul>
+        <fieldset>
           {mods.map((mod) => (
-            <li>
-              {mod.name}
+            <div key={mod.id}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={mod.enabled}
+                  onChange={() => handleToggleMod(mod)}
+                />
+                {mod.name}
+              </label>
               <button onClick={() => handleRemoveMod(mod)}>
                 🗙
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </fieldset>
       )}
     </dialog>
   );
