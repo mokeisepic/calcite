@@ -85,7 +85,64 @@ declare global {
       _hideEndLayer: (/* TODO: Args */) => void;
       _hooked: true;
       _lastPercent: number;
-      _level: any; // TODO: type
+      _level: {
+        loadLevel: (levelstring: string) => void;
+        _activeEnterEffect: number;
+        _activeExitEffect: number;
+        _audioScaleSprites: Phaser.GameObjects.Image[];
+        _cameraXRef: { _v: number };
+        _ceilingLine: Phaser.GameObjects.Image;
+        _ceilingShadowL: Phaser.GameObjects.Image;
+        _ceilingShadowR: Phaser.GameObjects.Image;
+        _ceilingStartScreenY: number;
+        _ceilingTiles: Phaser.GameObjects.Image[];
+        _ceilingY: number | null;
+        _collisionSections: any[][]; //  TODO: type
+        _colorTriggerIdx: number;
+        _colorTriggers: {
+          x: number;
+          index: number;
+          duration: number;
+          tintGround: boolean;
+          color: { r: number; g: number; b: number };
+        }[];
+        _endPortalContainer: Phaser.GameObjects.Container;
+        _endPortalEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+        _endPortalGameY: number;
+        _endPortalShine: Phaser.GameObjects.Image;
+        _enterEffectTriggerIdx: number;
+        _enterEffectTriggers: { x: number; effect: number }[];
+        _flyCeilingY: number;
+        _flyFloorY: number;
+        _flyGroundActive: boolean;
+        _groundAnimDuration: number;
+        _groundAnimFrom: number;
+        _groundAnimTime: number;
+        _groundAnimTo: number;
+        _groundAnimating: boolean;
+        _groundLine: Phaser.GameObjects.Image;
+        _groundShadowL: Phaser.GameObjects.Image;
+        _groundShadowR: Phaser.GameObjects.Image;
+        _groundStartScreenY: number;
+        _groundTargetValue: number;
+        _groundTiles: Phaser.GameObjects.Image[];
+        _groundY: number;
+        _lastObjectX: number;
+        _maxGroundWorldX: number;
+        _nearbyBuffer: any[]; // TODO: type
+        _scene: typeof window.gdScene;
+        _sectionContainers: any[]; // TODO: type
+        _sections: any[]; // TODO: type
+        _tileW: number;
+        _visMaxSec: number;
+        _visMinSec: number;
+        additiveContainer: Phaser.GameObjects.Container;
+        container: Phaser.GameObjects.Container;
+        endXPos: number;
+        flyCameraTarget: null; // Is it something else sometimes?
+        objects: any[]; // TODO: type
+        topContainer: Phaser.GameObjects.Container;
+      };
       _levelComplete: () => void;
       _levelWon: boolean;
       _logo: Phaser.GameObjects.Image;
