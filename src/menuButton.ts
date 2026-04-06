@@ -1,4 +1,3 @@
-import { loadMods } from "./mods";
 import { openMenu } from "./menu";
 import { getAssetUrl } from "./assets";
 

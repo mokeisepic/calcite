@@ -53,21 +53,25 @@ export const removeMod = (mod: ModData): Promise<void> => {
   });
 };
 
+let gdLoaded = false;
+export const hasLoaded = () => {
+  gdLoaded = true;
+};
+
+export const modInitCallbacks: (() => void)[] = [];
+
 export const executeMod = (mod: ModData) => {
   console.log("Injecting Mod: " + mod.name);
 
-  const blob = new Blob([`(() => {${mod.code}})()`], {
-    type: "application/javascript",
-  });
-  const url = URL.createObjectURL(blob);
+  const api = {
+    onLoad: (cb: () => void) => {
+      if (gdLoaded) cb();
+      else modInitCallbacks.push(cb);
+    },
+  };
 
-  const script = document.createElement("script");
-  script.src = url;
-  script.setAttribute("data-mod-id", mod.id);
-  script.setAttribute("data-mod-name", mod.name);
-  script.onload = () => URL.revokeObjectURL(url);
-
-  document.head.appendChild(script);
+  const runner = new Function("api", mod.code);
+  runner(api);
 };
 
 export const loadMods = async () => {

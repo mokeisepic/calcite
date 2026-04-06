@@ -2,10 +2,10 @@ import * as Phaser from "phaser";
 import { injectMenuButton } from "./menuButton";
 
 import { initMenu } from "./menu";
-import { loadMods } from "./mods";
+import { hasLoaded, loadMods, modInitCallbacks } from "./mods";
 
 const executeHook = () => {
-  console.log("Calcite Hook Loaded!");
+  loadMods();
 
   let _phaser: typeof Phaser | undefined = undefined;
 
@@ -46,8 +46,11 @@ const executeHook = () => {
                       if (this._sys && this._sys.events) {
                         this._sys.events.once("start", () => {
                           console.log("Geometry Dash Loaded!");
-                          injectMenuButton();
-                          loadMods();
+                          setTimeout(() => {
+                            hasLoaded();
+                            injectMenuButton();
+                            modInitCallbacks.forEach((cb) => cb());
+                          }, 0); // Super tiny time difference, I think this might be an async thing? this just waits for the next frame iirc.
                         });
                         return;
                       }
@@ -72,6 +75,8 @@ const executeHook = () => {
     },
     configurable: true,
   });
+
+  console.log("Calcite Hook Loaded!");
 };
 
 executeHook();
