@@ -25,6 +25,8 @@ export const injectMenuButton = async () => {
   window.gdScene.load.image("calcite", iconURL);
 
   window.gdScene.load.once("complete", () => {
+    if (!window.gdScene._menuActive) return;
+
     const { width, height } = window.gdScene.cameras.main;
 
     const menuBtn = window.gdScene.add.sprite(
