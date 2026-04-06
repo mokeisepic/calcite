@@ -53,7 +53,8 @@ const Menu = () => {
           setNeedRefresh(true);
           return updatedMods;
         } else {
-          executeMod(newMod);
+          if (newMod.needsRefresh) setNeedRefresh(true);
+          else executeMod(newMod);
           return [...prevMods, newMod];
         }
       });

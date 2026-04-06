@@ -1,4 +1,6 @@
-// @name Show FPS
+/*
+ * @name Show FPS
+ */
 
 api.onLoad(() => {
   window.gdScene._fpsText.visible = true;

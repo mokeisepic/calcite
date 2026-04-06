@@ -1,4 +1,6 @@
-// @name Custom Icon
+/*
+ * @name Custom Icon
+ */
 
 const imageURl = "https://picsum.photos/61/60"; // Must be 61x60 (for now)
 

@@ -1,4 +1,6 @@
-// @name Noclip
+/*
+ * @name Noclip
+ */
 
 api.onLoad(() => {
   window.gdScene._level.objects = window.gdScene._level.objects.map(

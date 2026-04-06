@@ -4,15 +4,34 @@ export interface ModData {
   id: string;
   code: string;
   name: string;
+  needsRefresh: boolean;
 }
 
+const parseHeaderFields = (code: string): Record<string, string> => {
+  const fields: Record<string, string> = {};
+
+  const headerCommentMatch = code.match(/^\/\*[\s\S]*?\*\//);
+  if (!headerCommentMatch) return fields;
+
+  const headerComment = headerCommentMatch[0];
+  const fieldRegex = /@(\w+)\s+(.+?)(?=\n|$)/g;
+
+  let match;
+  while ((match = fieldRegex.exec(headerComment)) !== null) {
+    fields[match[1]!] = match[2]!.trim();
+  }
+
+  return fields;
+};
+
 export const parseMod = (fileName: string, code: string): ModData => {
-  const nameMatch = code.match(/@name\s+(.+)/);
+  const fields = parseHeaderFields(code);
 
   return {
     id: fileName.split(".").slice(0, -1).join("."),
     code,
-    name: nameMatch && nameMatch[1] ? nameMatch[1].trim() : "Untitled Mod",
+    name: fields.name || "Untitled Mod",
+    needsRefresh: fields.needsRefresh === "true",
   };
 };
 

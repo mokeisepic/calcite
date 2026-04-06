@@ -1,4 +1,6 @@
-// @name Custom Background Tint
+/*
+ * @name Custom Background Tint
+ */
 
 const customTint = 0xff0000;
 
