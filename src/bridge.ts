@@ -5,10 +5,11 @@ window.addEventListener("message", async (e) => {
 
   if (e.data.type == "SAVE_MOD") {
     const mods = (await api.storage.local.get("mods")).mods || {};
+    let modToSave = structuredClone(e.data.mod);
     if (e.data.mod.id in mods) {
-      e.data.mod.settings = mods[e.data.mod.id].settings;
+      modToSave.settings = mods[e.data.mod.id].settings;
     }
-    mods[e.data.mod.id] = e.data.mod;
+    mods[e.data.mod.id] = modToSave;
     await api.storage.local.set({ mods });
     window.postMessage({ type: "SAVE_MOD_SUCCESS", id: e.data.mod.id }, "*");
     return;
