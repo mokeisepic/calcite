@@ -28,7 +28,7 @@ contents of the mod.
 - [ ] Userscript build tartet
 - [ ] More event hooks (e.g. `onStart`)
 - [ ] Make patcher auto-extract required function names (and offset)
-- [ ] Broaden patcher method matching
+- [x] Broaden patcher method matching
 - [ ] Mod dev auto reload
 
 ---

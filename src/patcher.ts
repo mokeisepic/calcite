@@ -62,8 +62,9 @@ const extractMethodAt = (code: string, startIndex: number): string | null => {
 const getMethodRegex = (method: string, id: number) => {
   const hexStr = "0x" + id.toString(16);
   const decStr = id.toString(10);
+  const escapedMethod = RegExp.escape(method);
   return new RegExp(
-    `\\[(?:(?:"${method}"|'${method}')|(?:_0x[\\da-f]+\\s*\\(\\s*(?:${hexStr}|${decStr})\\s*\\)))\\]`,
+    `\\[(?:(?:"${escapedMethod}"|'${escapedMethod}')|(?:_0x[\\da-f]+\\s*\\(\\s*(?:${hexStr}|${decStr})\\s*\\)))\\]|${escapedMethod}\\s*\\([\\w,\\s]*\\)\\s*{`,
   );
 };
 
