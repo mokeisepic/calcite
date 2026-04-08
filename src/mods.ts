@@ -160,9 +160,18 @@ export const executeMod = (mod: ModData) => {
   runner(api);
 };
 
+let modsLoaded = false;
+let modsLoadedCallbacks: (() => void)[] = [];
+export const onModsLoaded = (cb: () => void) => {
+  if (modsLoaded) cb();
+  else modsLoadedCallbacks.push(cb);
+};
+
 export const loadMods = async () => {
   const mods = await getMods();
   for (const mod of mods) {
     if (mod.enabled) executeMod(mod);
   }
+  modsLoaded = true;
+  modsLoadedCallbacks.forEach((cb) => cb());
 };

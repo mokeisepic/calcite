@@ -1,3 +1,5 @@
+import { onModsLoaded } from "./mods";
+
 interface Hook {
   method: string;
   modifier: (code: string) => string;
@@ -57,10 +59,12 @@ const extractMethodAt = (code: string, startIndex: number): string | null => {
   return null;
 };
 
-const getMethodRegex = (id: number) => {
+const getMethodRegex = (method: string, id: number) => {
   const hexStr = "0x" + id.toString(16);
   const decStr = id.toString(10);
-  return new RegExp(`_0x\\w+\\s*\\(\\s*(${hexStr}|${decStr})\\s*\\)`);
+  return new RegExp(
+    `\\[(?:(?:"${method}"|'${method}')|(?:_0x[\\da-f]+\\s*\\(\\s*(?:${hexStr}|${decStr})\\s*\\)))\\]`,
+  );
 };
 
 const getDeobfuscateMap = (code: string): Record<string, number> => {
@@ -113,6 +117,8 @@ const interceptScript = async (scriptNode: HTMLScriptElement) => {
   scriptNode.addEventListener("beforescriptexecute", (e) => e.preventDefault());
   scriptNode.remove();
 
+  await new Promise<void>((resolve) => onModsLoaded(resolve));
+
   const response = await fetch(originalSrc);
   let code = await response.text();
 
@@ -120,12 +126,14 @@ const interceptScript = async (scriptNode: HTMLScriptElement) => {
 
   for (const hook of hooks) {
     const id = deobfuscateMap[hook.method];
-    if (id === undefined) continue; // Maybe we should just look up with that name directly?
 
-    const match = code.match(getMethodRegex(id));
-    if (!match || match.index == null) continue;
+    const match = code.match(getMethodRegex(hook.method, id || -1));
+    if (!match || match.index == null) {
+      console.log(getMethodRegex(hook.method, id || -1));
+      continue;
+    }
 
-    const originalCode = extractMethodAt(code, match.index - 1);
+    const originalCode = extractMethodAt(code, match.index);
     if (!originalCode) continue;
 
     code = code.replace(originalCode, hook.modifier(originalCode));
