@@ -27,10 +27,10 @@ export const injectMenuButton = async () => {
   window.gdScene.load.once("complete", () => {
     if (!window.gdScene._menuActive) return;
 
-    const { width, height } = window.gdScene.cameras.main;
+    const { height } = window.gdScene.cameras.main;
 
     const menuBtn = window.gdScene.add.sprite(
-      width - 75,
+      75,
       height - 240,
       "calcite",
     );

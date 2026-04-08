@@ -18,10 +18,18 @@ const executeHook = () => {
     },
     set: function (value) {
       _phaser = value;
+
       console.log("Phaser loaded! Injecting Phaser.Game hook...");
 
+      setTimeout(() => {
+        (window as any).phaserLoaded = true;
+        window.dispatchEvent(new Event("phaser-loaded"));
+      }, 0);
+
       const OriginalGame = _phaser?.Game;
-      (_phaser!.Game as any) = function (config: Phaser.Types.Core.GameConfig) {
+      (_phaser!.Game as any) = function (
+        config: Phaser.Types.Core.GameConfig,
+      ) {
         const instance = new OriginalGame!(config);
         window.gdGame = instance;
 
@@ -42,6 +50,7 @@ const executeHook = () => {
               get: function () {
                 if (!this._hooked) {
                   this._hooked = true;
+                  console.log(this._sys.settings.key);
                   if (this._sys.settings.key == "GameScene") {
                     window.gdScene = this;
 
@@ -53,7 +62,7 @@ const executeHook = () => {
                             hasLoaded();
                             injectMenuButton();
                             modInitCallbacks.forEach((cb) => cb());
-                          }, 0); // Super tiny time difference, I think this might be an async thing? this just waits for the next frame iirc.
+                          }, 0);
                         });
                         return;
                       }

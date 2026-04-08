@@ -112,6 +112,7 @@ const getDeobfuscateMap = (code: string): Record<string, number> => {
 
 const interceptScript = async (scriptNode: HTMLScriptElement) => {
   const originalSrc = scriptNode.src;
+  const isModule = scriptNode.type === "module";
   if (!originalSrc.startsWith("http")) return; // Filter out other browser extensions
 
   scriptNode.type = "javascript/blocked";
@@ -139,9 +140,16 @@ const interceptScript = async (scriptNode: HTMLScriptElement) => {
     code = code.replace(originalCode, hook.modifier(originalCode));
   }
 
+  const patchedScript = document.createElement("script");
+
+  if (isModule && window.location.host === "web-dashers.github.io") {
+    patchedScript.type = "module";
+    code =
+      `const execute = () => { ${code} }; if (window.phaserLoaded) { execute() } else { window.addEventListener("phaser-loaded", execute) }`;
+  }
+
   code = `(function() {${code}})()`;
 
-  const patchedScript = document.createElement("script");
   patchedScript.textContent = code;
   patchedScript.dataset.patched = "true";
   document.documentElement.appendChild(patchedScript);

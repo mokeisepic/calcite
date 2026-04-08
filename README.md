@@ -29,6 +29,7 @@ contents of the mod.
 - [ ] More event hooks (e.g. `onStart`)
 - [ ] Make patcher auto-extract required function names (and offset)
 - [x] Broaden patcher method matching
+- [x] Source mod compatibility
 - [ ] Mod dev auto reload
 
 ---
